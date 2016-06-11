@@ -13,6 +13,11 @@ class NewVisionTest(unittest.TestCase):
     def tearDown(self):
         self.browser.quit()
 
+    def check_for_row_in_list_table(self, row_text):
+        table = self.browser.find_element_by_id('id_list_table')
+        rows = table.find_elements_by_tag_name('tr')
+        self.assertIn(row_text, [row.text for row in rows])
+
 
     def test_can_start_a_list_and_retrieve_it_later(self):
         # 小明听说有一个很酷的在线待办事件应用
@@ -39,29 +44,21 @@ class NewVisionTest(unittest.TestCase):
         # 待办事项表格中显示了"1: Buy fish"
         inputbox.send_keys(Keys.ENTER)
 
+        self.check_for_row_in_list_table('1: Buy fish')
 
-
-
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: Buy fish', [row.text for row in rows]),
-
-        
         # 页面有显示了一个文本框，可以输入其他的待办事项
         # 他输入了"make a fly"
         
         inputbox = self.browser.find_element_by_id('id_new_item')
-        inputbox.send_keys('make a fly')
+        inputbox.send_keys('Make a fly')
         inputbox.send_keys(Keys.ENTER)
 
 
         # 页面再次鞥新，他的清单中线是了这两个待办事项
-        table = self.browser.find_element_by_id('id_list_table')
-        rows = table.find_elements_by_tag_name('tr')
-        self.assertIn('1: Buy fish', [row.text for row in rows]),
-        self.assertIn(
-                '2: Make a fly',[row.text for row in rows]
-                )
+        
+        self.check_for_row_in_list_table('1: Buy fish')
+        self.check_for_row_in_list_table('2: Make a fly')
+        
         # 小明想知道这个网站是否会记得他的清单
 
 
